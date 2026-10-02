@@ -232,6 +232,7 @@ func (r *Recipe) handleError(err error, req *http.Request, res http.ResponseWrit
 	return false, nil
 }
 
+// CreateMagicLink generates a magic link and returns the link URL, the code lifetime in milliseconds, and any error.
 func (r *Recipe) CreateMagicLink(email *string, phoneNumber *string, tenantId string, userContext supertokens.UserContext) (string, uint64, error) {
 	stInstance, err := supertokens.GetInstanceOrThrowError()
 	if err != nil {
@@ -258,8 +259,11 @@ func (r *Recipe) CreateMagicLink(email *string, phoneNumber *string, tenantId st
 		supertokens.GetRequestFromUserContext(userContext),
 		userContext,
 	)
+	if err != nil {
+		return "", 0, err
+	}
 
-	return link, response.OK.CodeLifetime, err
+	return link, response.OK.CodeLifetime, nil
 }
 
 func (r *Recipe) SignInUp(email *string, phoneNumber *string, tenantId string, userContext supertokens.UserContext) (struct {
